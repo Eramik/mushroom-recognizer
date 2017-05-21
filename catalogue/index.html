@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+     maximum-scale=1.0, user-scalable=no">
+    <title>Mushroom catalogue</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js">
+    </script>
+    <!--<script src="js.cookie-2.1.3.min.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <!--<script src="jquery.spincrement.min.js"></script>-->
+    <link rel="icon" href="http://dgodovanets.shpp.me/recognizer/favicon.ico">
+</head>
+
+<body>
+ <div id="nav">
+   <button id="recognizer">Распознаватель</button><button id="catalogue">Каталог</button>
+ </div>
+ <div id="mushroom_search_block">
+    <div id="names_list">
+      <center><input id="mushroom_search" spellcheck="false" autocomplete="off" type="text" /></center>
+    </div>
+  </div>
+ <div id="mushroom_info">
+   <div id="description">
+     <center><span id="name"></span></center><br />
+     <img src="" id="mushroom_photo" /><br />
+     Можно встретить с <span id="month1"></span> по <span id="month2"></span>.<br />
+     Типы лесов: <span id="forests"></span>.<br /><br />
+
+     Цвета <b>шляпки</b>: <span id="cap_color"></span>.<br />
+     Диаметр шляпки: <span id="cap_diameter"></span> см.<br />
+     Подробнее про шляпку: <span id="cap_special"></span><br /><br />
+
+     Цвет <b>пластинок</b>: <span id="gills_color"></span>.<br />
+     Подробнее про пластинки: <span id="gills_special"></span><br /><br />
+
+     Цвет <b>ножки</b>: <span id="stem_color"></span>.<br />
+     Длина ножки: <span id="stem_length"></span> см.<br />
+     Диаметр ножки: <span id="stem_diameter"></span> см.<br />
+     Подробнее про ножку: <span id="stem_special"></span><br /><br />
+     <b>Кольцо</b>: <span id="has_ring"></span>.<div id="ring">
+     Цвет кольца: <span id="ring_color"></span>.<br />
+     Подробнее про кольцо: <span id="ring_special"></span>
+     </div><br /><br />
+
+     <span id="same_but_poisoned"></span><br /><br />
+
+     <span id="place"></span>
+   </div>
+ </div>
+ <div id="add_new">
+   <div id="mushroom_info">
+     <center><input type="text" class="field" id="field_name" maxlength="500" placeholder="Название гриба" autocomplete="off"/></center><br />
+     <input type="text" class="field" id="new_photo" maxlength="1000" placeholder="Ссылка(и) на фото" autocomplete="off"/><br />
+     Можно встретить с <select id="new_month1">
+                         <option value="1">января</option>
+                         <option value="2">февраля</option>
+                         <option value="3">марта</option>
+                         <option value="4">апреля</option>
+                         <option value="5">мая</option>
+                         <option value="6">июня</option>
+                         <option value="7">июля</option>
+                         <option value="8">августа</option>
+                         <option value="9">сентября</option>
+                         <option value="10">октября</option>
+                         <option value="11">ноября</option>
+                         <option value="12">декабря</option>
+                       </select>
+      по
+                       <select id="new_month2">
+                         <option value="1">январь</option>
+                         <option value="2">февраль</option>
+                         <option value="3">март</option>
+                         <option value="4">апрель</option>
+                         <option value="5">май</option>
+                         <option value="6">июнь</option>
+                         <option value="7">июль</option>
+                         <option value="8">август</option>
+                         <option value="9">сентябрь</option>
+                         <option value="10">октябрь</option>
+                         <option value="11">ноябрь</option>
+                         <option value="12">декабрь</option>
+                       </select>.<br />
+     Типы лесов:<br />
+     <input type="checkbox" class="checkbox" value=";хвойный;" id="forest1"><img src="http://dgodovanets.shpp.me/recognizer/media/FORESThv.jpg" class="minpic"> хвойный<br />
+     <input type="checkbox" class="checkbox" value=";лиственный;" id="forest2"><img src="http://dgodovanets.shpp.me/recognizer/media/FORESTlist.jpg" class="minpic"> лиственный<br />
+     <input type="checkbox" class="checkbox" value=";смешанный;" id="forest3"><img src="http://dgodovanets.shpp.me/recognizer/media/FORESTmix.jpg" class="minpic"> смешанный
+     <br /><br />
+
+     Цвета <b>шляпки</b>: <br />
+     <input type="checkbox" class="checkbox_cap" value=";белый;" id="new_cap_color1"> <img src="http://dgodovanets.shpp.me/recognizer/media/HATwhite.jpg" class="minpic"> белый<br />
+     <input type="checkbox" class="checkbox_cap" value=";оранжевый;" id="new_cap_color2"> <img src="http://dgodovanets.shpp.me/recognizer/media/HATorang.jpg" class="minpic"> оранжевый<br />
+     <input type="checkbox" class="checkbox_cap" value=";красный;" id="new_cap_color3"> <img src="http://dgodovanets.shpp.me/recognizer/media/HATred.jpg" class="minpic"> красный<br />
+     <input type="checkbox" class="checkbox_cap" value=";желтый;" id="new_cap_color4"> <img src="http://dgodovanets.shpp.me/recognizer/media/HATyellow.jpg" class="minpic"> желтый<br />
+     <input type="checkbox" class="checkbox_cap" value=";коричневый;" id="new_cap_color5"> <img src="http://dgodovanets.shpp.me/recognizer/media/HATbrown.jpg" class="minpic"> коричневый<br />
+     <input type="checkbox" class="checkbox_cap" value=";бурый;" id="new_cap_color6"> <img src="http://dgodovanets.shpp.me/recognizer/media/HATburiy.jpg" class="minpic"> бурый<br />
+     <input type="text" class="field" id="new_cap_color_another" maxlength="80" placeholder="Другой цвет" autocomplete="off"/>
+     Диаметр шляпки: <input type="number" min="1" max="999" class="field" id="new_cap_diameter1" autocomplete="off"/> -
+     <input type="number" min="1" max="999" class="field" id="new_cap_diameter2" autocomplete="off"/> см.<br />
+     <input type="text" class="field" id="new_cap_special" maxlength="500" placeholder="Подробнее про шляпку" autocomplete="off"/><br /><br />
+
+     Цвет <b>пластинок</b>: <br />
+     <input type="checkbox" class="checkbox_gills" value=";белый;" id="new_gills_color1"> <img src="http://dgodovanets.shpp.me/recognizer/media/GILLSwhite.jpg" class="minpic"> белый<br />
+     <input type="checkbox" class="checkbox_gills" value=";оранжевый;" id="new_gills_color2"> <img src="http://dgodovanets.shpp.me/recognizer/media/GILLSorange.jpg" class="minpic"> оранжевый<br />
+     <input type="checkbox" class="checkbox_gills" value=";красный;" id="new_gills_color3"> <img src="http://dgodovanets.shpp.me/recognizer/media/GILLSred.jpg" class="minpic"> красный<br />
+     <input type="checkbox" class="checkbox_gills" value=";желтый;" id="new_gills_color4"> <img src="http://dgodovanets.shpp.me/recognizer/media/GILLSyellow.jpg" class="minpic"> желтый<br />
+     <input type="checkbox" class="checkbox_gills" value=";коричневый;" id="new_gills_color5"> <img src="http://dgodovanets.shpp.me/recognizer/media/GILLSbrown.jpg" class="minpic"> коричневый<br />
+     <input type="text" class="field" id="new_gills_color_another" maxlength="80" placeholder="Другой цвет" autocomplete="off"/>
+    <input type="text" class="field" id="new_gills_special" maxlength="500" placeholder="Подробнее про пластинки" autocomplete="off"/><br /><br />
+
+     Цвет <b>ножки</b>:<br />
+     <input type="checkbox" class="checkbox_stem" value=";белый;" id="new_stem_color1"> <img src="http://dgodovanets.shpp.me/recognizer/media/STEMwhite.jpg" class="minpic"> белый<br />
+     <input type="checkbox" class="checkbox_stem" value=";оранжевый;" id="new_stem_color2"> <img src="http://dgodovanets.shpp.me/recognizer/media/STEMorange.jpg" class="minpic"> оранжевый<br />
+     <input type="checkbox" class="checkbox_stem" value=";красный;" id="new_stem_color3"> <img src="http://dgodovanets.shpp.me/recognizer/media/STEMred.jpg" class="minpic"> красный<br />
+     <input type="checkbox" class="checkbox_stem" value=";желтый;" id="new_stem_color4"> <img src="http://dgodovanets.shpp.me/recognizer/media/STEMyellow.jpg" class="minpic"> желтый<br />
+     <input type="checkbox" class="checkbox_stem" value=";коричневый;" id="new_stem_color5"> <img src="http://dgodovanets.shpp.me/recognizer/media/STEMbrown.jpg" class="minpic"> коричневый<br />
+     <input type="checkbox" class="checkbox_stem" value=";бурый;" id="new_stem_color6"> <img src="http://dgodovanets.shpp.me/recognizer/media/STEMbury.jpg" class="minpic"> бурый<br />
+     <input type="text" class="field" id="new_stem_color_another" maxlength="80" placeholder="Другой цвет" autocomplete="off"/>
+     Длина ножки: <input type="number" min="1" max="999" class="field" id="new_stem_length1" autocomplete="off"/> -
+     <input type="number" min="1" max="999" class="field" id="new_stem_length2" autocomplete="off"/> см.<br />
+     Диаметр ножки: <input type="number" min="1" max="999" class="field" id="new_stem_diameter1" autocomplete="off"/> -
+     <input type="number" min="1" max="999" class="field" id="new_stem_diameter2" autocomplete="off"/> см.<br />
+     <input type="text" class="field" id="new_stem_special" maxlength="500" placeholder="Подробнее про ножку" autocomplete="off"/><br /><br />
+     <b>Кольцо</b>: <select id="new_has_ring">
+                       <option value="1">есть</option>
+                       <option value="0" selected="true">нету</option>
+                    </select>
+     <div id="new_ring">
+     Цвет кольца: <br />
+     <input type="checkbox" class="checkbox_ring" value=";белый;" id="new_ring_color1"> белый<br />
+     <input type="checkbox" class="checkbox_ring" value=";оранжевый;" id="new_ring_color2"> оранжевый<br />
+     <input type="checkbox" class="checkbox_ring" value=";красный;" id="new_ring_color3"> красный<br />
+     <input type="checkbox" class="checkbox_ring" value=";желтый;" id="new_ring_color4"> желтый<br />
+     <input type="checkbox" class="checkbox_ring" value=";коричневый;" id="new_ring_color5"> коричневый<br />
+     <input type="checkbox" class="checkbox_ring" value=";бурый;" id="new_ring_color6"> бурый<br />
+     <input type="text" class="field" id="new_ring_color_another" maxlength="80" placeholder="Другой цвет" autocomplete="off"/>
+     <input type="text" class="field" id="new_ring_special" maxlength="500" placeholder="Подробнее про кольцо" autocomplete="off"/>
+     </div><br /><br />
+
+     <input type="text" class="field" id="field_same_but_poisoned" maxlength="1000" placeholder="Не съедобные грибы, похожие на этот" autocomplete="off"/><br /><br />
+
+     <input type="text" class="field" id="field_place" placeholder="В каких местах чаще всего растёт" maxlength="500" autocomplete="off"/><br /><br />
+
+     <button class="stdbutton" id="clear">Очистить</button><br />
+     <div id="are_you_sure">
+       <center>Вы точно хотите очистить все значения?</center>
+       <button class="stdbutton" id="are_you_sure_no">Нет</button> <button class="stdbutton" id="are_you_sure_yes">Да</button>
+     <br /><br /><br /></div>
+
+
+     <button class="stdbutton" id="send">Отправить</button>
+     <div id="are2_you_sure"><br />
+       <center>Вы уверены, что этих данных достаточно и они достоверные? Их нельзя будет изменить до принятия администратором в основную базу данных.</center>
+       <button class="stdbutton" id="are2_you_sure_no">Нет</button> <button class="stdbutton" id="are2_you_sure_yes">Да</button><br /><br /><br />
+     </div>
+  </div>
+ </div>
+  <div id="menu_area">
+    <button id="menu" class="roundButton" data="0"></button>
+    <button id="search_closed" class="roundButton"></button>
+    <button id="new_closed" class="roundButton"></button>
+    <button id="edit_closed" class="roundButton"></button>
+  </div>
+</body>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-96765333-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script>
+  const buttonPressedDelay = 300;
+  var names;
+  var id = -1;
+  var info;
+  var edit = false;
+  const PORT = 17997;
+  $("#mushroom_info").hide();
+  $("#add_new").hide();
+  $(document).ready(function() {
+    $("#menu").data("status", "closed");
+
+    $("#search_closed").on("click", function() {
+      $("#mushroom_info").hide();
+      $("#add_new").hide();
+      $("#mushroom_search_block").show();
+      closeMenu();
+    });
+
+    $("#mushroom_search").on("keyup", function () {
+      var str = $(this).val().toLowerCase();
+      names.forEach(function(item, i, arr) {
+        var litem = item.toLowerCase();
+        if(litem.indexOf(str) == -1) {
+          $(".mushroom:contains(" + item + ")").hide();
+        } else {
+          $(".mushroom:contains(" + item + ")").show();
+        }
+      });
+    });
+
+    $("#recognizer").on("mouseover", function () {
+      $(this).css("width", "50%");
+      $("#catalogue").css("width", "49%");
+    });
+
+    $("#recognizer").on("mouseleave", function () {
+      $(this).css("width", "49%");
+      $("#catalogue").css("width", "50%");
+    });
+
+    $("#recognizer").on("click", function () {
+      $(this).attr("id", "recognizer2");
+      window.location.href = "http://dgodovanets.shpp.me/recognizer/index.html";
+    });
+
+    $("#are2_you_sure").hide();
+    $("#are_you_sure").hide();
+
+    $("#new_closed").on("click", function () {
+      $("#mushroom_info").hide();
+      $("#mushroom_search_block").hide();
+      $("#add_new").show();
+      closeMenu();
+    });
+
+    $("#edit_closed").on("click", function () {
+      if(id == -1) {
+        alert("Сначала выберите гриб, который вы хотите редактировать");
+        return;
+      }
+
+      $("#field_name").val(names[id]);
+
+      var month = info[0].month.split(";");
+      $("#new_month1").val(month[1]);
+      $("#new_month2").val(month[month.length - 2]);
+
+      setCheckByVal(info[0].forest.split(";"), "checkbox");
+      setCheckByVal(info[0].cap_color.split(";"), "checkbox_cap");
+      setCheckByVal(info[0].gills_color.split(";"), "checkbox_gills");
+      setCheckByVal(info[0].stem_color.split(";"), "checkbox_stem");
+
+      var infoPart = info[0].ring_color.split(";")
+      if(infoPart[1] != "нету") {
+        $("#new_has_ring").val("1");
+        $("#new_ring").show();
+        setCheckByVal(infoPart, "checkbox_ring");
+      }
+
+      $("#new_cap_special").val(info[0].cap_special);
+      $("#new_gills_special").val(info[0].gills_special);
+      $("#field_place").val(info[0].place);
+      $("#field_same_but_poisoned").val(info[0].same_but_poisoned);
+      $("#new_ring_special").val(info[0].ring_special);
+
+      infoPart = info[0].cap_diameter.split(";");
+      infoPart = numSequenseToIntervalArr(infoPart);
+      $("#new_cap_diameter1").val(infoPart[0]);
+      $("#new_cap_diameter2").val(infoPart[1]);
+
+      infoPart = info[0].stem_length.split(";");
+      infoPart = numSequenseToIntervalArr(infoPart);
+      $("#new_stem_length1").val(infoPart[0]);
+      $("#new_stem_length2").val(infoPart[1]);
+
+      infoPart = info[0].stem_diameter.split(";");
+      infoPart = numSequenseToIntervalArr(infoPart);
+      $("#new_stem_diameter1").val(infoPart[0]);
+      $("#new_stem_diameter2").val(infoPart[1]);
+
+      edit = true;
+
+      $("#mushroom_info").hide();
+      $("#mushroom_search_block").hide();
+      $("#add_new").show();
+    });
+
+    $("#new_ring").hide();
+
+    $("#new_has_ring").on("change", function () {
+      if( $("#new_has_ring").val() == 1) {
+        $("#new_ring").show();
+      }
+      else {
+        $("#new_ring").hide();
+      }
+    });
+
+    $("#menu").on("click", function (){
+      if($("#menu").data("status") == "closed"){
+        $("#search_closed").attr("id", "search_opened");
+        $("#new_closed").attr("id", "new_opened");
+        $("#edit_closed").attr("id", "edit_opened");
+        $("#menu").data("status", "opened");
+      } else {
+        closeMenu();
+      }
+    });
+
+    $("#clear").on("click", function() {
+      var this1 = this;
+      $(this).attr("class", "stdbutton2");
+      setTimeout(function() {
+        $(this1).attr("class", "stdbutton");
+        if($("#are_you_sure").css("display") != "none") {
+          $("#are_you_sure").hide(buttonPressedDelay);
+        }
+        else {
+          $("#are_you_sure").show(buttonPressedDelay);
+          var height=$("body").height();
+          $("body").animate({"scrollTop":height},"slow");
+        }
+      }, buttonPressedDelay);
+    });
+
+    $("#send").on("click", function() {
+      var this1 = this;
+      $(this).attr("class", "stdbutton2");
+      setTimeout(function() {
+        $(this1).attr("class", "stdbutton");
+        if($("#are2_you_sure").css("display") != "none") {
+          $("#are2_you_sure").hide(buttonPressedDelay);
+        }
+        else {
+          $("#are2_you_sure").show(buttonPressedDelay);
+          var height=$("body").height();
+          $("body").animate({"scrollTop":height},"slow");
+        }
+      }, buttonPressedDelay);
+    });
+
+    $("#are2_you_sure_no").on("click", function () {
+      var this1 = this;
+      $(this).attr("id", "are2_you_sure_no2");
+      setTimeout(function() {
+        $("#are2_you_sure").hide(buttonPressedDelay);
+        $(this1).attr("id", "are2_you_sure_no");
+      }, buttonPressedDelay);
+    });
+
+
+    $("#are_you_sure_no").on("click", function () {
+      var this1 = this;
+      $(this).attr("id", "are_you_sure_no2");
+      setTimeout(function() {
+        $("#are_you_sure").hide(buttonPressedDelay);
+        $(this1).attr("id", "are_you_sure_no");
+      }, buttonPressedDelay);
+    });
+
+    $("#are_you_sure_yes").on("click", function () {
+      var this1 = this;
+      $(this).attr("id", "are_you_sure_yes2");
+      setTimeout(function() {
+        $("#are_you_sure").hide(buttonPressedDelay);
+        $(this1).attr("id", "are_you_sure_yes");
+        $(".field").val("");
+        $(".checkbox").prop('checked', false);
+      }, buttonPressedDelay);
+    });
+
+    $("#are2_you_sure_yes").on("click", function () {
+      var this1 = this;
+      $(this).attr("id", "are_you_sure_yes2");
+      setTimeout(function() {
+        $("#are_you_sure").hide(buttonPressedDelay);
+        $(this1).attr("id", "are_you_sure_yes");
+
+        var attributes = {};
+        var val = "";
+
+        // mushroom
+        val = $("#field_name").val();
+        if(val != "") {
+          attributes.mushroom = val;
+        } else {
+          alert("Введите название гриба");
+          $("#are2_you_sure").hide();
+          return;
+        }
+
+        // month
+        attributes.month1 = $("#new_month1").val();
+        attributes.month2 = $("#new_month2").val();
+
+        val = "";
+        // forest
+        if($("#forest1").is(":checked") == true){
+          val += $("#forest1").val();
+        }
+        if($("#forest2").is(":checked") == true){
+          val += $("#forest2").val();
+        }
+        if($("#forest3").is(":checked") == true){
+          val += $("#forest3").val();
+        }
+        if(val == "") {
+          alert("Укажите минимум один тип леса")
+          $("#are2_you_sure").hide();
+          return;
+        } else {
+          attributes.forest = val;
+        }
+
+        val = "";
+        // cap_color
+        if($("#new_cap_color1").is(":checked") == true){
+          val += $("#new_cap_color1").val();
+        }
+        if($("#new_cap_color2").is(":checked") == true){
+          val += $("#new_cap_color2").val();
+        }
+        if($("#new_cap_color3").is(":checked") == true){
+          val += $("#new_cap_color3").val();
+        }
+        if($("#new_cap_color4").is(":checked") == true){
+          val += $("#new_cap_color4").val();
+        }
+        if($("#new_cap_color5").is(":checked") == true){
+          val += $("#new_cap_color5").val();
+        }
+        if($("#new_cap_color6").is(":checked") == true){
+          val += $("#new_cap_color6").val();
+        }
+        if($("#new_cap_color_another").val() != "") {
+          val += ";";
+          val += $("#new_cap_color_another").val();
+          val += ";";
+        }
+        if(val == ""){
+          alert("Выберите минимум один цвет шляпки");
+          $("#are2_you_sure").hide();
+          return;
+        } else {
+          attributes.cap_color = val;
+        }
+
+        val = "";
+        // gills_color
+        if($("#new_gills_color1").is(":checked") == true){
+          val += $("#new_gills_color1").val();
+        }
+        if($("#new_gills_color2").is(":checked") == true){
+          val += $("#new_gills_color2").val();
+        }
+        if($("#new_gills_color3").is(":checked") == true){
+          val += $("#new_gills_color3").val();
+        }
+        if($("#new_gills_color4").is(":checked") == true){
+          val += $("#new_gills_color4").val();
+        }
+        if($("#new_gills_color5").is(":checked") == true){
+          val += $("#new_gills_color5").val();
+        }
+        if($("#new_gills_color6").is(":checked") == true){
+          val += $("#new_gills_color6").val();
+        }
+        if($("#new_gills_color_another").val() != "") {
+          val += ";";
+          val += $("#new_gills_color_another").val();
+          val += ";";
+        }
+        if(val == ""){
+          alert("Выберите минимум один цвет пластинок");
+          $("#are2_you_sure").hide();
+          return;
+        } else {
+          attributes.gills_color = val;
+        }
+
+        val = "";
+        // stem_color
+        if($("#new_stem_color1").is(":checked") == true){
+          val += $("#new_stem_color1").val();
+        }
+        if($("#new_stem_color2").is(":checked") == true){
+          val += $("#new_stem_color2").val();
+        }
+        if($("#new_stem_color3").is(":checked") == true){
+          val += $("#new_stem_color3").val();
+        }
+        if($("#new_stem_color4").is(":checked") == true){
+          val += $("#new_stem_color4").val();
+        }
+        if($("#new_stem_color5").is(":checked") == true){
+          val += $("#new_stem_color5").val();
+        }
+        if($("#new_stem_color6").is(":checked") == true){
+          val += $("#new_stem_color6").val();
+        }
+        if($("#new_stem_color_another").val() != "") {
+          val += ";";
+          val += $("#new_stem_color_another").val();
+          val += ";";
+        }
+        if(val == ""){
+          alert("Выберите минимум один цвет ножки");
+          $("#are2_you_sure").hide();
+          return;
+        } else {
+          attributes.stem_color = val;
+        }
+
+        // cap_diameter
+        var isEmpty = true;
+        val = $("#new_cap_diameter1").val();
+        if(val != "") {
+          isEmpty = false;
+          attributes.cap_diameter1 = val;
+        }
+        val = $("#new_cap_diameter2").val();
+        if(val != "") {
+          isEmpty = false;
+          attributes.cap_diameter2 = val;
+        }
+        if(isEmpty) {
+          alert("Укажите диаметр шляпки");
+          $("#are2_you_sure").hide();
+          return;
+        }
+
+        // stem_diamter
+        val = $("#new_stem_diameter1").val();
+        if(val != "") {
+          attributes.stem_diamter1 = val;
+        }
+        val = $("#new_stem_diameter2").val();
+        if(val != "") {
+          attributes.stem_diamter2 = val;
+        }
+
+        // stem_length
+        isEmpty = true;
+        val = $("#new_stem_length1").val();
+        if(val != "") {
+          isEmpty = false;
+          attributes.stem_length1 = val;
+        }
+        val = $("#new_stem_length2").val();
+        if(val != "") {
+          isEmpty = false;
+          attributes.stem_length2 = val;
+        }
+        if(isEmpty) {
+          alert("Укажите длину ножи");
+          $("#are2_you_sure").hide();
+          return;
+        }
+
+        attributes.place = $("#field_place").val();
+        attributes.same_but_poisoned = $("#field_same_but_poisoned").val();
+        attributes.ring_special = $("#new_ring_special").val();
+        attributes.gills_special = $("#new_gills_special").val();
+        attributes.cap_special = $("#new_cap_special").val();
+        attributes.stem_special = $("#new_stem_special").val();
+        attributes.links = $("#new_photo").val();
+
+        if($("#new_has_ring").val() == 1) {
+          val = "";
+          // ring_color
+          if($("#new_ring_color1").is(":checked") == true){
+            val += $("#new_ring_color1").val();
+          }
+          if($("#new_ring_color2").is(":checked") == true){
+            val += $("#new_ring_color2").val();
+          }
+          if($("#new_ring_color3").is(":checked") == true){
+            val += $("#new_ring_color3").val();
+          }
+          if($("#new_ring_color4").is(":checked") == true){
+            val += $("#new_ring_color4").val();
+          }
+          if($("#new_ring_color5").is(":checked") == true){
+            val += $("#new_ring_color5").val();
+          }
+          if($("#new_ring_color6").is(":checked") == true){
+            val += $("#new_ring_color6").val();
+          }
+          if($("#new_ring_color_another").val() != "") {
+            val += ";";
+            val += $("#new_ring_color_another").val();
+            val += ";";
+          }
+          if(val == ""){
+            alert("Выберите минимум один цвет кольца");
+            $("#are2_you_sure").hide();
+            return;
+          } else {
+            attributes.ring_color = val;
+          }
+        } else {
+          attributes.ring_color = ";нету;";
+        }
+
+        if(edit) {
+          attributes.flag = "edit";
+          edit = false;
+        } else {
+          attributes.flag = "new";
+        }
+
+        console.log(attributes);
+
+
+        $(".field").val("");
+        $(".checkbox").prop('checked', false);
+
+
+        $.ajax({
+          method: "POST",
+          url: "http://dgodovanets.shpp.me:" + PORT + "/new",
+          data: JSON.stringify(attributes),
+          contentType: "application/json",
+					processData: false,
+          success: function( msg ) {
+          	console.log( "Data Saved ")
+            console.log(  msg );
+          }
+        });
+      }, buttonPressedDelay);
+    });
+
+    $.ajax({
+      method: "GET",
+      url: "http://dgodovanets.shpp.me:" + PORT + "/db/names_list",
+    }).done(function( data ) {
+      names = JSON.parse(data);
+      var element = "";
+    	for(var i = 0; i < names.length; i++) {
+        element = "<button class='mushroom'>" + names[i] + "</button>";
+        $(element).appendTo("#names_list");
+      }
+      $(".mushroom").on("click", function () {
+        $(this).attr("class", "mushroom2");
+        id = jQuery.inArray( $(this).html(), names );
+        var this2 = this;
+        $.ajax({
+          method: "GET",
+          url: "http://dgodovanets.shpp.me:" + PORT + "/db/description?id=" + (id + 1),
+        }).done(function( data ) {
+          info = JSON.parse(data);
+          var month = info[0].month.split(";");
+          $("#name").html(names[id]);
+          $("#month1").html(convertMonth1(month[1]));
+          $("#month2").html(convertMonth2(month[month.length - 2]));
+
+          $("#mushroom_photo").attr("src", "http://dgodovanets.shpp.me/recognizer/media/mushrooms/" + (id + 1) + ".jpg");
+
+          var infoPart = info[0].forest.split(";");
+          $("#forests").html(arrToStr(infoPart));
+
+          infoPart = info[0].cap_color.split(";");
+          $("#cap_color").html(arrToStr(infoPart));
+
+          infoPart = info[0].cap_diameter.split(";");
+          $("#cap_diameter").html(numSequenseToInterval(infoPart));
+
+          $("#cap_special").html(info[0].cap_special);
+
+          infoPart = info[0].gills_color.split(";");
+          $("#gills_color").html(arrToStr(infoPart));
+
+          $("#gills_special").html(info[0].gills_special);
+
+          infoPart = info[0].stem_length.split(";");
+          $("#stem_length").html(numSequenseToInterval(infoPart));
+
+          infoPart = info[0].stem_diameter.split(";");
+          $("#stem_diameter").html(numSequenseToInterval(infoPart));
+
+          infoPart = info[0].stem_color.split(";");
+          $("#stem_color").html(arrToStr(infoPart));
+
+          $("#stem_special").html(info[0].stem_special);
+
+          infoPart = info[0].ring_color.split(";");
+          $("#ring_color").html(arrToStr(infoPart));
+
+          if ($("#ring_color").html() == "нету") {
+            $("#ring").hide();
+            $("#has_ring").html("нету");
+          } else {
+            $("#ring").show();
+            $("#has_ring").html("есть");
+            $("#ring_special").html(info[0].ring_special);
+          }
+
+          $("#place").html(info[0].place);
+
+          $("#same_but_poisoned").html(info[0].same_but_poisoned);
+      }); // }).done(function( data ) {
+        setTimeout(function () {
+          $("#mushroom_search_block").hide();
+          $("#mushroom_info").show();
+          $(this2).attr("class", "mushroom");
+        }, buttonPressedDelay); // setTimeout(function () {
+      }); // $(".mushroom").on("click", function () {
+    }); // }).done(function( data ) {
+  }); // $(document).ready(function() {
+
+    function convertMonth2(month) {
+      switch (month) {
+        case "1":    return "январь";
+        case "2":   return "февраль";
+        case "3":      return "март";
+        case "4":    return "апрель";
+        case "5":       return "май";
+        case "6":      return "июнь";
+        case "7":      return "июль";
+        case "8":    return "август";
+        case "9":  return "сентябрь";
+        case "10":  return "октябрь";
+        case "11":   return "ноябрь";
+        case "12":  return "декабрь";
+        default: throw "Wrong month";
+      }
+    }
+
+  function convertMonth1(month) {
+      switch (month) {
+        case "1":    return "января";
+        case "2":   return "февраля";
+        case "3":     return "марта";
+        case "4":    return "апреля";
+        case "5":       return "мая";
+        case "6":      return "июня";
+        case "7":      return "июля";
+        case "8":   return "августа";
+        case "9":  return "сентября";
+        case "10":  return "октября";
+        case "11":   return "ноября";
+        case "12":  return "декабря";
+        default: throw "Wrong month";
+      }
+    }
+  function closeMenu () {
+    if($("#menu").data("status") == "opened") {
+      $("#search_opened").attr("id", "search_closed");
+      $("#new_opened").attr("id", "new_closed");
+      $("#edit_opened").attr("id", "edit_closed");
+      $("#menu").data("status", "closed");
+    }
+  }
+
+  // array with form ["", "element", ..., "element", ""]
+  // to string "element, ..., element"
+  function arrToStr(arr) {
+    var str = "";
+    var first = 1;
+    var last = arr.length - 1;
+    for(var i = first; i < last - 1; i++) {
+      if(arr[i] != ""){
+        str += arr[i];
+        str += ", ";
+      }
+    }
+    str += arr[last - 1];
+    return str;
+  }
+
+  function numSequenseToInterval(arr) {
+    if (arr.length == 3) {
+      return arr[2];
+    } else {
+      var first = 1;
+      var last = arr.length - 1;
+      return  arr[first] + " - " + arr[last - 1];
+    }
+  }
+
+  function numSequenseToIntervalArr(arr) {
+    if (arr.length == 3) {
+      return arr[2];
+    } else {
+      var first = 1;
+      var last = arr.length - 1;
+      var ret = [];
+      ret.push(arr[first]);
+      ret.push(arr[last - 1]);
+      return  ret;
+    }
+  }
+
+  function setCheckByVal(arr, elClass) {
+    if(arr.length == 3) {
+      $("." + elClass + ":checkbox[value=';" + arr[1] + ";']").attr("checked", true);
+    } else {
+      for(var i = 1; i < arr.length - 1; i++) {
+        $("." + elClass + ":checkbox[value=';" + arr[i] + ";']").attr("checked", true);
+      }
+    }
+  }
+</script>
+</html>

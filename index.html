@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mushroom recognizer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="js.cookie-2.1.3.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="jquery.spincrement.min.js"></script>
+    <link rel="icon" href="http://dgodovanets.shpp.me/recognizer/favicon.ico">
+</head>
+
+<body>
+  <div id="nav">
+    <button id="recognizer">Распознаватель</button><button id="catalogue">Каталог</button>
+  </div>
+    <div id="welcome">
+      <div id="questionZone">
+        <span id="question">
+          <b>Внимание!</b> Приложение носит консультативный характер. Будьте внимательны, отравление грибами опасно для жизни. Приложение не несёт ответственности за последствия. Собирайте грибы на свой страх и риск.
+          <br /><center><input type="checkbox" value="dont_show_me_val" id="dont_show_me" /><span id="dont_show_me_text">Больше не показывать</span></center>
+          <center><button id="hideWelcome">Я соглашаюсь</button></center>
+        </span>
+      </div>
+    </div>
+    <main id="questionZone">
+    </main>
+</body>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-96765333-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script>
+    /*
+	// example question
+	var question = {
+		type: "number" or "list"
+		text: "Какого примерно диаметра шляпка гриба? Число, сантиметры.",
+		answers: array() // if list
+		role: "main" or "additional"
+		answer: // here will be answer
+		attribute: "cap_diameter"
+	}
+	*/
+    var attributes = {};
+    var question = {};
+    var questions = [];
+    var variants = [];
+    var stage = 0; // defines questions pack
+    var qnum = -1; // index of current question (using as ++qnum)
+    var vnum = 0; // index of current variant
+    const last0stage = 6;
+    const buttonPressedDelay = 300;
+    var prevAnswer = ""; // For triggers which uses "#back" button
+
+    $(document).ready(function() {
+
+        if (Cookies.get("isNewDevice") != "false") {
+            Cookies.set("isNewDevice", "false", {
+                expires: 365
+            });
+            $.ajax({
+                url: "http://dgodovanets.shpp.me:17997/?q=newDevice",
+                type: "GET"
+            });
+        }
+
+        if (Cookies.get("showWelcome") == "false") {
+          $("#welcome").remove();
+          getQuestions();
+        }
+        else {
+          $("#hideWelcome").on("click", function() {
+              if($("#dont_show_me").is(":checked")) {
+                Cookies.set("showWelcome", "false", {
+                    expires: 365
+                });
+              }
+              $("#welcome").remove();
+              getQuestions();
+          });
+        }
+    });
+
+    $("#catalogue").on("mouseover", function () {
+      $(this).css("width", "50%");
+      $("#recognizer").css("width", "49%");
+    });
+
+    $("#catalogue").on("mouseleave", function () {
+      $(this).css("width", "49%");
+      $("#recognizer").css("width", "50%");
+    });
+
+    $("#catalogue").on("click", function () {
+      $(this).attr("id", "catalogue2");
+      window.location.href = "http://dgodovanets.shpp.me/recognizer/catalogue/index.html";
+    });
+
+    window.addEventListener('popstate', function(e){
+      if($("#back").length != 0)
+      {
+        $("#back").click();
+      }
+    }, false);
+
+    function ask() {
+        $("#questionZone").hide();
+        $("#questionZone").html("");
+        role = question.role; // For global use in onClick function
+        $("<span id='question'>" + question.text + "</span>").appendTo("#questionZone");
+        // Create HTML, depending on question type;
+        var answersHTML = "";
+        if (question.type == "number") {
+            answersHTML += "<br><br><form id='numInput'> <input type='number' autofocus id='field' min='1' max='9999'><input type='submit'class='li' id='submit' value='Ввести'/></form> <button class='li' id='back'>назад</button>";
+
+            $(answersHTML).appendTo("#questionZone");
+            $("#field").focus();
+
+            $("#numInput").on("submit", function() {
+                if ($("input").val() == "")
+                    return false;
+                question.answer = $("input").val();
+                $("#submit").attr('class', 'li2');
+                setTimeout(function() {
+                    answerGiven();
+                }, buttonPressedDelay);
+                return false;
+            });
+            $("#back").on("click", function () {
+              question.answer = "назад";
+              $(this).attr('class', 'li2');
+              setTimeout(function() {
+                  answerGiven();
+              }, buttonPressedDelay);
+            });
+        } else if (question.type == "list") {
+            var idSeed = 0;
+            for (var i = 0; i < question.answers.length; i++)
+
+              if (question.answers[i] == "назад") {
+                answersHTML += "<button class ='li' id=back>" + question.answers[i] + "</button>";
+                idSeed++; // На всякий.
+              } else if (question.answers[i] == "Больше информации") {
+                answersHTML += "<button class ='li' id=info>" + question.answers[i] + "</button>";
+                idSeed++; // На всякий.
+              } else {
+                if(qnum == 2 && stage == 0)
+                { // month
+                  answersHTML += "<button class ='li' id=ans" + (idSeed++) + ">" + question.answers[i] + "</button>";
+                }
+                else if(qnum == 3 && stage == 0)
+                { // hat
+                  answersHTML += "<button class ='li' id=ansh" + (idSeed++) + ">" + question.answers[i] + "</button>";
+                }
+                else if(qnum == 4 && stage == 0)
+                { // stem
+                  answersHTML += "<button class ='li' id=anss" + (idSeed++) + ">" + question.answers[i] + "</button>";
+                }
+                else if(qnum == 5 && stage == 0)
+                { // gills
+                  answersHTML += "<button class ='li' id=ansg" + (idSeed++) + ">" + question.answers[i] + "</button>";
+                }
+                else if(qnum == 6 && stage == 0)
+                { // ring
+                  answersHTML += "<button class ='li' id=ansr" + (idSeed++) + ">" + question.answers[i] + "</button>";
+                }
+                else
+                {
+                  answersHTML += "<button class ='li'>" + question.answers[i] + "</button>";
+                }
+              }
+
+            $(answersHTML).appendTo("#question");
+            $(".li").on("click", function() {
+                question.answer = $(this).html();
+                if(question.answer != "назад")
+                {
+                  prevAnswer = question.answer;
+                }
+                $(this).attr('class', 'li2');
+                setTimeout(function() {
+                    answerGiven();
+                }, buttonPressedDelay);
+            });
+        } else {
+            throw "Incorrect question's type!";
+        }
+        $("#questionZone").show();
+        window.history.pushState({}, "s:" + stage + ";q:"+ qnum + ";v:" + vnum);
+    } // ask
+
+    function answerGiven() {
+        if (question.role == "main") {
+
+            if (question.answer == "назад") {
+              //window.history.back();
+              if (stage == 0)
+              {
+                question = questions[stage][--qnum];
+                generateQuestionText();
+                ask();
+              }
+              else if (stage == 1)
+              {
+                if(qnum == 0) {
+                  stage--; qnum = 7; // back the values
+                  question = {
+                      type: "list",
+                      answers: ["Да", "Нет", "Больше информации", "Я могу предоставить более точную информацию", "назад"],
+                      role: "additional",
+                      text: variants[vnum].cap_special + " " + variants[vnum].stem_special
+                  }
+                  ask();
+                }
+                else {
+                  question = questions[stage][--qnum];
+                  generateQuestionText();
+                  ask();
+                }
+              }
+              else {
+                throw "Wrong stage for back";
+              }
+            } else if (questions[stage].length != qnum + 1) {
+                if (question.attribute == "month") {
+                  attributes[question.attribute] = convertMonth(question.answer);
+                }
+                else if (question.attribute == "currentMonth")
+                {
+                  if (question.answer == "Да") {
+                    attributes["month"] = new Date().getMonth() + 1;
+                    qnum++; // Skip selecting month.
+                  }
+                }
+                else {
+                  attributes[question.attribute] = question.answer;
+                }
+
+                question = questions[stage][++qnum];
+                generateQuestionText();
+                ask();
+            } else {
+                attributes[question.attribute] = question.answer;
+                if(stage == 0 && qnum == 6 || stage == 1 && qnum == 1) // if last question were answered
+                {
+                  qnum++;
+                }
+                getVariants();
+            }
+        } else if(role == "additional"){ // role == additional
+            if (question.answer == "Да") {
+                $("#questionZone").html("<div id='question'>" + variants[vnum].mushroom + ".<br />Вероятность: <span class='spincrement'>" + variants[vnum].percent + "</span>%.<br />" +
+                    "<img src='media/mushrooms/" + variants[vnum].id + ".jpg' />"  +
+                    (stage == 0 ? "Что бы увеличить процент, вы можете ответить на дополнительные вопросы </div><button class='li' id='MoreInfo'>Ответить на дополнительные вопросы</button>" : "</div>") +
+                    "<button class='li' id='return'>Распознать другой гриб</button> <button class='li' id='back'>назад</button>");
+                $("#return").on('click', function() {
+                    $(this).attr('class', 'li2');
+                    attributes = {};
+                    question = {};
+                    questions = [];
+                    variants = [];
+                    stage = 0;
+                    qnum = -1;
+                    setTimeout(function() {
+                        getQuestions();
+                    }, buttonPressedDelay)
+                });
+                $("#MoreInfo").on('click', function() {
+                    $(this).attr('class', 'li2');
+                    stage = 1;
+                    qnum = -1;
+                    question = questions[stage][++qnum];
+                    generateQuestionText();
+                    setTimeout(function() {
+                        ask();
+                    }, buttonPressedDelay);
+                });
+                $("#back").on('click', function() {
+                  ask();
+                });
+                $(".spincrement").spincrement({
+                  from: 0,                // Стартовое число
+                  to: variants[vnum].percent,              // Итоговое число. Если false, то число будет браться из элемента с классом spincrement, также сюда можно напрямую прописать число. При этом оно может быть, как целым, так и с плавающей запятой
+                  decimalPlaces: 0,       // Сколько знаков оставлять после запятой
+                  decimalPoint: ".",      // Разделитель десятичной части числа
+                  thousandSeparator: ",", // Разделитель тыcячных
+                  duration: 3000          // Продолжительность анимации в миллисекундах
+              });
+            }
+            else if (question.answer == "Нет") {
+                if (++vnum != variants.length) {
+                    question = {
+                        type: "list",
+                        answers: (stage == 0 ? ["Да", "Нет", "Больше информации", "Я могу предоставить более точную информацию", "назад"] : ["Да", "Нет", "Больше информации", "назад"]),
+                        role: "additional",
+                        text: variants[vnum].cap_special + " " + variants[vnum].stem_special
+                    }
+                    ask();
+                }
+                 else {
+                    if (stage == 0) {
+                        question = {
+                            text: "Больше вариантов нет. Вы можете внести информацию об этом виде, используя каталог.",
+                            type: "list",
+                            answers: ["Я могу предоставить более точную информацию", "назад"],
+                            role: "additional"
+                        }
+                        ask();
+                    } else if (stage == 1){ // stage == 1
+                        $("#question").html("Гриб не найден. Вы можете внести информацию об этом виде, используя каталог." + "<button class='li' id='return'>Распознать другой гриб</button> <button clas='li' id='back'>назад</button>");
+                        $("#return").on('click', function() {
+                            attributes = {};
+                            question = {};
+                            questions = [];
+                            variants = [];
+                            stage = 0;
+                            qnum = -1;
+                            getQuestions();
+                        });
+                    }
+                }
+
+            } else if (question.answer == "Больше информации") {
+                question = {
+                    type: "list",
+                    answers: (stage == 0 ? ["Да", "Нет", "Я могу предоставить более точную информацию", "назад"] : ["Да", "Нет", "назад"]),
+                    role: "additional",
+                    text: variants[vnum].gills_special + " " + variants[vnum].ring_special + " " + variants[vnum].place
+                }
+                ask();
+            } else if (question.answer == "Я могу предоставить более точную информацию"){ // Я могу предоставить более точную информацию
+                stage++;
+                // OPTIMIZED
+                // qnum = -1;
+                // question = questions[stage][++qnum];
+                qnum = 0;
+                question = questions[stage][0];
+                generateQuestionText();
+                ask();
+            }
+            else if (question.answer == "назад") {
+              if(vnum == 0 && prevAnswer != "Больше информации")
+              {
+                if (prevAnswer == "Больше информации")
+                {
+                  prevAnswer = ""; // reset
+                }
+                question = questions[stage][--qnum];
+                generateQuestionText();
+                ask();
+              }
+              else {
+                if (variants.length == 0) {
+                  $("#question").html("Гриб не найден." + "<button class='li' id='return'>Распознать другой гриб</button> <button class='li' id='back'>назад</button>");
+                  $("#return").on('click', function() {
+                      attributes = {};
+                      question = {};
+                      questions = [];
+                      variants = [];
+                      stage = 0;
+                      qnum = -1;
+                      getQuestions();
+                  });
+                  $("#back").on('click', function() {
+                    --qnum;
+                    ask();
+                  });
+                } else {
+                  if(prevAnswer != "Больше информации")
+                  {
+                    vnum--;
+                  } else {prevAnswer = "";} // reset
+                  question = {
+                      type: "list",
+                      answers: (stage == 0 ? ["Да", "Нет", "Больше информации", "Я могу предоставить более точную информацию", "назад"] : ["Да", "Нет", "Больше информации", "назад"]),
+                      role: "additional",
+                      text: variants[vnum].cap_special + " " + variants[vnum].stem_special
+                  };
+                  ask();
+                }
+              }
+            }
+        }
+    } // function answerGiven() {
+
+    function convertMonth(month) {
+      switch (month) {
+        case "Январь":    return 1;
+        case "Февраль":   return 2;
+        case "Март":      return 3;
+        case "Апрель":    return 4;
+        case "Май":       return 5;
+        case "Июнь":      return 6;
+        case "Июль":      return 7;
+        case "Август":    return 8;
+        case "Сентябрь":  return 9;
+        case "Октябрь":   return 10;
+        case "Ноябрь":    return 11;
+        case "Декабрь":   return 12;
+        default: throw "Wrong month";
+      }
+    }
+
+    function generateQuestionText() {
+        switch (question.attribute) {
+            case "month":
+                question.text = "Укажите номер месяца, в котором вы нашли гриб.";
+                break;
+            case "forest":
+                question.text = "Укажите тип леса, в котором вы нашли гриб.";
+                break;
+            case "cap_diameter":
+                question.text = "Укажите диаметр шляпки гриба(целое число в сантиметрах).";
+                break;
+            case "cap_color":
+                question.text = "Укажите цвет шляпки гриба.";
+                break;
+            case "gills_color":
+                question.text = "Укажите цвет пластинок под шляпкой гриба.";
+                break;
+            case "stem_length":
+                question.text = "Укажите длину ножки гриба(целое число в сантиметрах).";
+                break;
+            case "ring_color":
+                question.text = "Укажите цвет кольца гриба.";
+                break;
+            case "stem_color":
+                question.text = "Укажите цвет ножки гриба.";
+                break;
+            case "currentMonth":
+                question.text = "Вы нашли гриб в текущем месяце?";
+                break;
+            default:
+                throw "Wrong question attribute";
+        }
+    }
+
+    function getVariants() {
+        $.ajax({
+            url: "http://dgodovanets.shpp.me:17997/",
+            data: {
+                attributes
+            },
+            type: "GET",
+            success: function(result) { // PORT!!!
+                variants = JSON.parse(result);
+                vnum = 0;
+                //$("#question").html(JSON.parse(result)[0].mushroom);
+                if (variants.length == 0) {
+                  $("#question").html("Гриб не найден." + "<button class='li' id='return'>Распознать другой гриб</button> <button class='li' id='back'>назад</button>");
+                  $("#return").on('click', function() {
+                      attributes = {};
+                      question = {};
+                      questions = [];
+                      variants = [];
+                      stage = 0;
+                      qnum = -1;
+                      getQuestions();
+                  });
+                  $("#back").on('click', function() {
+                    --qnum;
+                    ask();
+                  });
+                }
+                else {
+                  question = {
+                      type: "list",
+                      answers: (stage == 0 ? ["Да", "Нет", "Больше информации", "Я могу предоставить более точную информацию", "назад"] : ["Да", "Нет", "Больше информации", "назад"]),
+                      role: "additional",
+                      text: variants[0].cap_special + " " + variants[0].stem_special
+                  }
+                  ask();
+                }
+              }
+            //}
+        });
+    }
+    var x;
+
+
+
+    function getQuestions() {
+        $.ajax({
+            url: "http://dgodovanets.shpp.me:17997/?q=questions",
+            data: {
+                attributes
+            },
+            type: "GET",
+            success: function(result) { // PORT!!!
+                result = JSON.parse(result);
+                questions.push(JSON.parse(result[0].questions));
+                questions.push(JSON.parse(result[1].questions));
+                question = questions[0][++qnum];
+                generateQuestionText();
+                ask();
+            }
+        });
+    }
+
+</script>
+
+</html>

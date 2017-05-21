@@ -1,0 +1,333 @@
+@font-face {
+    font-family: roboto;
+    src: url(fonts/Roboto-Regular.ttf);
+}
+
+body {
+  font-family: roboto;
+}
+
+#recognizer {
+  width: 50%;
+  margin: auto;
+  margin-top: 3px;
+  display: block;
+  padding: 5px;
+  text-align: center;
+  font-size: 16px;
+  background-color: #1976D2;
+  color: white;
+  border: #1565C0 solid 2px;
+  cursor: default;
+  border-radius: 2px;
+  transition: 0.2s;
+  float: left;
+  margin-bottom: 5px;
+}
+
+#nav {
+  max-width: 550px;
+  margin: auto;
+}
+
+#catalogue {
+  width: 49%;
+  margin: auto;
+  margin-top: 3px;
+  display: block;
+  padding: 5px;
+  text-align: center;
+  font-size: 16px;
+  background-color: white;
+  color: #1565C0;
+  border: #1565C0 solid 2px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: 0.2s;
+  float: right;
+  margin-bottom: 5px;
+}
+
+#catalogue2 {
+  width: 49%;
+  margin: auto;
+  margin-top: 3px;
+  display: block;
+  padding: 5px;
+  text-align: center;
+  font-size: 16px;
+  background-color: #1976D2;
+  color: white;
+  border: #1565C0 solid 2px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: 0.1s;
+  float: right;
+  margin-bottom: 5px;
+}
+
+#question {
+    color: #1565C0;
+    font-size: 120%;
+    margin: 3px;
+    padding: 3px;
+    padding-bottom: 5px;
+    word-wrap: break-word;
+    transition: 0.1s;
+}
+
+#welcome {
+  width: 100%;
+  height: 100%;
+}
+
+input:focus {
+  outline: none;
+}
+
+button:active, button:focus {
+  outline: none;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+
+#hideWelcome {
+  background-color: white;
+  border: 2px #1565C0 solid;
+  border-radius: 2px;
+  font-size: 90%;
+  margin: 10px;
+  padding: 5px;
+  color: #1565C0;
+  cursor: pointer;
+  transition: 0.1s;
+}
+
+#hideWelcome:active {
+  background-color: white;
+  border: 2px #1565C0 solid;
+  border-radius: 2px;
+  font-size: 90%;
+  margin: 10px;
+  padding: 5px;
+  color: #1565C0;
+  cursor: pointer;
+  transform: translate(1px, 1px);
+  transition: 0.1s;
+}
+
+#dont_show_me {
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: 1px #1565C0 solid;
+  border-radius: 1px;
+  color: #1565C0;
+  transform: translateY(5px);
+}
+
+#dont_show_me_text {
+  font-size: 75%
+}
+
+#questionZone {
+  margin: auto;
+  max-width: 550px;
+}
+
+img {
+  max-width: 550px;
+  height: auto;
+  width: 100%;
+}
+
+#ansr0 {
+  margin-bottom: 10px;
+}
+
+#ans0 {
+  background-image: url(media/FORESThv.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ans1 {
+  background-image: url(media/FORESTlist.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ans2 {
+  background-image: url(media/FORESTmix.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#ansh0 {
+  background-image: url(media/HATwhite.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansh1 {
+  background-image: url(media/HATorang.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansh2 {
+  background-image: url(media/HATred.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansh3 {
+  background-image: url(media/HATyellow.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansh4 {
+  background-image: url(media/HATbrown.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansh5 {
+  background-image: url(media/HATburiy.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#anss0 {
+  background-image: url(media/STEMwhite.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#anss1 {
+  background-image: url(media/STEMorange.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#anss2 {
+  background-image: url(media/STEMred.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#anss3 {
+  background-image: url(media/STEMyellow.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#anss4 {
+  background-image: url(media/STEMbrown.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#anss5 {
+  background-image: url(media/STEMbury.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#ansg0 {
+  margin-bottom: 10px;
+}
+#ansg1 {
+  background-image: url(media/GILLSwhite.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansg2 {
+  background-image: url(media/GILLSorange.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansg3 {
+  background-image: url(media/GILLSred.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansg4 {
+  background-image: url(media/GILLSyellow.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+#ansg5 {
+  background-image: url(media/GILLSbrown.jpg);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#back {
+  background-image: url(media/back.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-top: 20px;
+}
+
+#info {
+  background-image: url(media/info.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.li {
+    width: 96%;
+    margin: auto;
+    margin-top: 3px;
+    display: block;
+    padding: 5px;
+    text-align: center;
+    font-size: 16px;
+    background-color: white;
+    color: #1565C0;
+    border: #1565C0 solid 2px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: 0.1s;
+}
+
+.li:hover {
+  width: 99%;
+  margin: auto;
+  margin-top: 3px;
+  display: block;
+  padding: 5px;
+  text-align: center;
+  font-size: 16px;
+  background-color: black;
+  color: #1565C0;
+  border: #1565C0 solid 2px;
+  cursor: pointer;
+  background-color: white;
+  border-radius: 2px;
+  transition: 0.2s;
+}
+
+.li2 {
+    width: 96%;
+    margin: auto;
+    margin-top: 3px;
+    display: block;
+    padding: 5px;
+    text-align: center;
+    font-size: 16px;
+    background-color: #1976D2;
+    color: white;
+    border: #1565C0 solid 2px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+#field {
+    width: 93%;
+    margin: auto;
+    font-size: 20px;
+    display: block;
+    border: 2px solid #1565C0;
+    background-color: white;
+    color: #1565C0;
+    padding: 5px;
+    border-radius: 2px;
+    transition: 0.1s;
+}
+
+input:focus {
+  outline: none;
+}
