@@ -190,6 +190,14 @@
   $(document).ready(function() {
     $("#menu").data("status", "closed");
 
+    var tagId = getQueryVariable("tagid");
+    if (tagId != undefined) {
+      var id = convertTagToId(tagId);
+      displayMushroom(id);
+      $("#mushroom_search_block").hide();
+      $("#mushroom_info").show(); 
+    }
+
     $("#search_closed").on("click", function() {
       $("#mushroom_info").hide();
       $("#add_new").hide();
@@ -643,19 +651,30 @@
       }
       $(".mushroom").on("click", function () {
         $(this).attr("class", "mushroom2");
-        id = jQuery.inArray( $(this).html(), names );
+        id = jQuery.inArray( $(this).html(), names ) + 1;
         var this2 = this;
+        displayMushroom(id, names);
+        setTimeout(function () {
+          $("#mushroom_search_block").hide();
+          $("#mushroom_info").show();
+          $(this2).attr("class", "mushroom");
+        }, buttonPressedDelay); // setTimeout(function () {
+      }); // $(".mushroom").on("click", function () {
+    }); // }).done(function( data ) {
+  }); // $(document).ready(function() {
+
+    function displayMushroom(id, names) {
         $.ajax({
           method: "GET",
-          url: "http://dgodovanets.shpp.me:" + PORT + "/db/description?id=" + (id + 1),
+          url: "http://dgodovanets.shpp.me:" + PORT + "/db/description?id=" + id,
         }).done(function( data ) {
           info = JSON.parse(data);
           var month = info[0].month.split(";");
-          $("#name").html(names[id]);
+          $("#name").html(info[0].name);
           $("#month1").html(convertMonth1(month[1]));
           $("#month2").html(convertMonth2(month[month.length - 2]));
 
-          $("#mushroom_photo").attr("src", "http://dgodovanets.shpp.me/recognizer/media/mushrooms/" + (id + 1) + ".jpg");
+          $("#mushroom_photo").attr("src", "http://dgodovanets.shpp.me/recognizer/media/mushrooms/" + id + ".jpg");
 
           var infoPart = info[0].forest.split(";");
           $("#forests").html(arrToStr(infoPart));
@@ -700,14 +719,7 @@
 
           $("#same_but_poisoned").html(info[0].same_but_poisoned);
       }); // }).done(function( data ) {
-        setTimeout(function () {
-          $("#mushroom_search_block").hide();
-          $("#mushroom_info").show();
-          $(this2).attr("class", "mushroom");
-        }, buttonPressedDelay); // setTimeout(function () {
-      }); // $(".mushroom").on("click", function () {
-    }); // }).done(function( data ) {
-  }); // $(document).ready(function() {
+    }
 
     function convertMonth2(month) {
       switch (month) {
@@ -744,6 +756,18 @@
         default: throw "Wrong month";
       }
     }
+
+  function convertTagToId(TagId) {
+    switch(TagId) {
+      case "e2f116a0-dfd5-489c-9fee-a2e28fdcdd6f": return 1;
+      case "2310431b-4991-445f-bfc7-47debdca4087": return 5;
+      case "2f4c1ea6-e2d0-405d-9ae8-caf28614d0f9": return 2;
+      case "008d234f-b77a-4c26-8497-44f87ad3ad94": return 3;
+      case "ad0b8015-b99c-43e0-a103-0550d51bb9ed": return 4;
+      default: throw "Wrong TagId";
+    }
+  }
+
   function closeMenu () {
     if($("#menu").data("status") == "opened") {
       $("#search_opened").attr("id", "search_closed");
@@ -801,5 +825,17 @@
       }
     }
   }
+  function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+      var pair = vars[i].split('=');
+      if (decodeURIComponent(pair[0]) == variable) {
+        return decodeURIComponent(pair[1]);
+      }
+    }
+    console.log('Query variable %s not found', variable);
+  }
+
 </script>
 </html>
